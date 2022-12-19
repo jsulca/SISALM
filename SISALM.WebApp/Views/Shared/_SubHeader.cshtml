@@ -1,0 +1,36 @@
+﻿@{
+    Modulo? modulo = ViewBag.Modulo;
+}
+
+@if (modulo.HasValue)
+{
+    <header class="d-flex justify-content-center py-1">
+        <ul class="nav nav-pills">
+            @switch (modulo)
+            {
+                case Modulo.DASHBOARD:
+                    <li class="nav-item"><a href="#" class="nav-link">General</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Valorizacion</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Stocks</a></li>
+                    break;
+
+                case Modulo.GENERAL:
+                    <li class="nav-item"><a href="#" class="nav-link">Material</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">MetaDato</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Almacen</a></li>
+                    break;
+                    
+                case Modulo.LOGISTICA:
+                    <li class="nav-item"><a href="#" class="nav-link">Nota Entrada</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Nota de Salida</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Almacen</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Kardex</a></li>
+                    break;
+            }
+        </ul>
+    </header>
+}
+
+
+
+
