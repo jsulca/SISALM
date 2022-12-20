@@ -20,8 +20,26 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
+#region Rutas MVC
+
+app.MapAreaControllerRoute(
+    name: "general",
+    areaName: "General",
+    pattern: "General/{controller}/{action=Index}/{id?}"
+);
+
+app.MapAreaControllerRoute(
+    name: "logistica",
+    areaName: "Logistica",
+    pattern: "Logistica/{controller}/{action=Index}/{id?}"
+);
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
+
+#endregion
 
 app.Run();

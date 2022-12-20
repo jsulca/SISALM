@@ -1,4 +1,8 @@
-﻿<header>
+﻿@{
+    string url = Context.Request.Path.ToUriComponent();
+    if (url == "/") url = "/Home";
+}
+<header>
     <div class="px-3 py-2 text-bg-dark">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -7,25 +11,25 @@
                 </a>
                 <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small text-center">
                     <li>
-                        <a href="#" class="nav-link text-secondary">
+                        <a class="nav-link @MenuActivo(url, "/Home")" asp-controller="Home" asp-action="Index" asp-area="">
                             <i class="fa fa-home d-block mx-auto mb-1"></i>
                             Home
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a class="nav-link @MenuActivo(url, "/Dashboard")" asp-controller="Dashboard" asp-action="Index" asp-area="">
                             <i class="fa-solid fa-chart-simple d-block mx-auto mb-1"></i>
                             Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a class="nav-link @MenuActivo(url, "/General")" asp-controller="MetaDato" asp-action="Index" asp-area="General">
                             <i class="fa fa-cloud d-block mx-auto mb-1"></i>
                             General
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link text-white">
+                        <a class="nav-link @MenuActivo(url, "/Logistica")" asp-controller="AlmacenMaterial" asp-action="Index" asp-area="Logistica">
                             <i class="fa-solid fa-cart-flatbed d-block mx-auto mb-1"></i>
                             Logistica
                         </a>
@@ -36,3 +40,11 @@
     </div>
     @await Html.PartialAsync("~/Views/Shared/_SubHeader.cshtml")
 </header>
+@functions {
+    string MenuActivo(string url, string ruta)
+    {
+        string respuesta = "text-white";
+        if (url.Contains(ruta)) respuesta = "text-secondary";
+        return respuesta;
+    }
+}

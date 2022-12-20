@@ -1,10 +1,20 @@
 ﻿@{
     Modulo? modulo = ViewBag.Modulo;
+    string url = Context.Request.Path.ToUriComponent();
+
+    const string GENERAL_MATERIAL = "/General/Material";
+    const string GENERAL_METADATO = "/General/MetaDato";
+    const string GENERAL_ALMACEN = "/General/Almacen";
+
+    const string LOGISTICA_NOTAENTRADA = "/Logistica/NotaEntrada";
+    const string LOGISTICA_NOTASALIDA = "/Logistica/NotaSalida";
+    const string LOGISTICA_ALMACENMATERIAL = "/Logistica/AlmacenMaterial";
+    const string LOGISTICA_KARDEX = "/Logistica/Kardex";
 }
 
 @if (modulo.HasValue)
 {
-    <header class="d-flex justify-content-center py-1">
+    <header class="d-flex justify-content-center py-1 bg-light">
         <ul class="nav nav-pills">
             @switch (modulo)
             {
@@ -15,22 +25,29 @@
                     break;
 
                 case Modulo.GENERAL:
-                    <li class="nav-item"><a href="#" class="nav-link">Material</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">MetaDato</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Almacen</a></li>
+                    <li class="nav-item"><a href="@GENERAL_MATERIAL" class="nav-link @PaginaActiva(url, GENERAL_MATERIAL)">Material</a></li>
+                    <li class="nav-item"><a href="@GENERAL_METADATO" class="nav-link @PaginaActiva(url, GENERAL_METADATO)">MetaDato</a></li>
+                    <li class="nav-item"><a href="@GENERAL_ALMACEN" class="nav-link @PaginaActiva(url, GENERAL_ALMACEN)">Almacen</a></li>
                     break;
-                    
+
                 case Modulo.LOGISTICA:
-                    <li class="nav-item"><a href="#" class="nav-link">Nota Entrada</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Nota de Salida</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Almacen</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Kardex</a></li>
+                    <li class="nav-item"><a href="@LOGISTICA_NOTAENTRADA" class="nav-link @PaginaActiva(url, LOGISTICA_NOTAENTRADA)">Nota Entrada</a></li>
+                    <li class="nav-item"><a href="@LOGISTICA_NOTASALIDA" class="nav-link @PaginaActiva(url, LOGISTICA_NOTASALIDA)">Nota de Salida</a></li>
+                    <li class="nav-item"><a href="@LOGISTICA_ALMACENMATERIAL" class="nav-link @PaginaActiva(url, LOGISTICA_ALMACENMATERIAL)">Almacen</a></li>
+                    <li class="nav-item"><a href="@LOGISTICA_KARDEX" class="nav-link @PaginaActiva(url, LOGISTICA_KARDEX)">Kardex</a></li>
                     break;
             }
         </ul>
     </header>
 }
 
-
-
+@functions 
+{
+    string? PaginaActiva(string url, string ruta)
+    {
+        string? respuesta = null;
+        if (url.Contains(ruta)) respuesta = "active";
+        return respuesta;
+    }
+}
 
