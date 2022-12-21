@@ -5,15 +5,17 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISALM.WebApp", "SISALM.WebApp\SISALM.WebApp.csproj", "{8B0924B4-4925-4251-8DE9-700B0E3A13C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISALM.Entidades", "SISALM.Entidades\SISALM.Entidades.csproj", "{1AE5B720-EF29-4CF7-A91E-1DF1E9C72F80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISALM.Entidades", "SISALM.Entidades\SISALM.Entidades.csproj", "{1AE5B720-EF29-4CF7-A91E-1DF1E9C72F80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISALM.Contextos", "SISALM.Contextos\SISALM.Contextos.csproj", "{1DAED159-3B67-4706-988E-723EB57BA7FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISALM.Contextos", "SISALM.Contextos\SISALM.Contextos.csproj", "{1DAED159-3B67-4706-988E-723EB57BA7FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISALM.Repositorios", "SISALM.Repositorios\SISALM.Repositorios.csproj", "{8EB106E9-97A6-4A0B-8C57-9ADA80791E7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISALM.Repositorios", "SISALM.Repositorios\SISALM.Repositorios.csproj", "{8EB106E9-97A6-4A0B-8C57-9ADA80791E7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISALM.Logicas", "SISALM.Logicas\SISALM.Logicas.csproj", "{29E0A85B-53A6-49FA-B616-B0F57F063612}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISALM.Logicas", "SISALM.Logicas\SISALM.Logicas.csproj", "{29E0A85B-53A6-49FA-B616-B0F57F063612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISALM.Utilitarios", "SISALM.Utilitarios\SISALM.Utilitarios.csproj", "{46AEE2ED-C2F5-4B87-BD0B-2BFF847FEEED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISALM.Utilitarios", "SISALM.Utilitarios\SISALM.Utilitarios.csproj", "{46AEE2ED-C2F5-4B87-BD0B-2BFF847FEEED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISALM.Configuraciones", "SISALM.Configuraciones\SISALM.Configuraciones.csproj", "{1D0A0213-F8E9-46CD-ABCE-4C184BC87E34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{46AEE2ED-C2F5-4B87-BD0B-2BFF847FEEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46AEE2ED-C2F5-4B87-BD0B-2BFF847FEEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46AEE2ED-C2F5-4B87-BD0B-2BFF847FEEED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D0A0213-F8E9-46CD-ABCE-4C184BC87E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D0A0213-F8E9-46CD-ABCE-4C184BC87E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D0A0213-F8E9-46CD-ABCE-4C184BC87E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D0A0213-F8E9-46CD-ABCE-4C184BC87E34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

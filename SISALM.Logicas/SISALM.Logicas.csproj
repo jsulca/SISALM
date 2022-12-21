@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SISALM.Contextos\SISALM.Contextos.csproj" />
+    <ProjectReference Include="..\SISALM.Entidades\SISALM.Entidades.csproj" />
+    <ProjectReference Include="..\SISALM.Repositorios\SISALM.Repositorios.csproj" />
+  </ItemGroup>
+
 </Project>

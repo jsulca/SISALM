@@ -1,7 +1,43 @@
+using Microsoft.EntityFrameworkCore;
+using SISALM.Contextos;
+using SISALM.Logicas.General;
+using SISALM.Logicas.Servicios.General;
+using Newtonsoft.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+                //.Addn(x =>
+                //{
+                //    x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                //}); ;
+
+var services = builder.Services;
+var configuration = builder.Configuration;
+
+#region Adicionales
+
+#endregion
+
+#region Contextos
+
+services.AddDbContext<SISALMContexto>(options =>
+{
+    //options.UseNpgsql(configuration.GetConnectionString("FIVESYS")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    options.UseSqlServer(configuration.GetConnectionString("SISALM")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
+
+#endregion
+
+#region Logicas
+
+
+services.AddScoped<IMaterialServicio, MaterialLogica>()
+    .AddScoped<IMetaDatoServicio, MetaDatoLogica>()
+    .AddScoped<IAlmacenServicio, AlmacenLogica>();
+
+#endregion
 
 var app = builder.Build();
 

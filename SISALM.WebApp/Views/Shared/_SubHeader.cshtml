@@ -9,7 +9,7 @@
     const string LOGISTICA_NOTAENTRADA = "/Logistica/NotaEntrada";
     const string LOGISTICA_NOTASALIDA = "/Logistica/NotaSalida";
     const string LOGISTICA_ALMACENMATERIAL = "/Logistica/AlmacenMaterial";
-    const string LOGISTICA_KARDEX = "/Logistica/Kardex";
+    const string LOGISTICA_MOVIMIENTO = "/Logistica/Movimiento";
 }
 
 @if (modulo.HasValue)
@@ -34,7 +34,7 @@
                     <li class="nav-item"><a href="@LOGISTICA_NOTAENTRADA" class="nav-link @PaginaActiva(url, LOGISTICA_NOTAENTRADA)">Nota Entrada</a></li>
                     <li class="nav-item"><a href="@LOGISTICA_NOTASALIDA" class="nav-link @PaginaActiva(url, LOGISTICA_NOTASALIDA)">Nota de Salida</a></li>
                     <li class="nav-item"><a href="@LOGISTICA_ALMACENMATERIAL" class="nav-link @PaginaActiva(url, LOGISTICA_ALMACENMATERIAL)">Almacen</a></li>
-                    <li class="nav-item"><a href="@LOGISTICA_KARDEX" class="nav-link @PaginaActiva(url, LOGISTICA_KARDEX)">Kardex</a></li>
+                    <li class="nav-item"><a href="@LOGISTICA_MOVIMIENTO" class="nav-link @PaginaActiva(url, LOGISTICA_MOVIMIENTO)">Kardex</a></li>
                     break;
             }
         </ul>

@@ -4,7 +4,7 @@ using SISALM.WebApp.Commons.Filtros;
 namespace SISALM.WebApp.Areas.Logistica.Controllers
 {
     [ModuloLogisticaFiltro]
-    public class KardexController : Controller
+    public class MovimientoController : Controller
     {
         public IActionResult Index()
         {

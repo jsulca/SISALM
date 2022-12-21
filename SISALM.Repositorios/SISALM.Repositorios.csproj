@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SISALM.Contextos\SISALM.Contextos.csproj" />
+    <ProjectReference Include="..\SISALM.Entidades\SISALM.Entidades.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logistica\" />
+  </ItemGroup>
+
 </Project>
