@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SISALM.WebApp.Models;
 
 namespace SISALM.WebApp.Controllers
 {

@@ -1,0 +1,90 @@
+﻿@model Almacen
+@{
+    ViewBag.Title = "Editar Almacen";
+
+    string callBack = ViewBag.CallBack;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@ViewBag.Title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label>Código: <span class="text-danger">(*)</span></label>
+                    <input type="text" class="form-control form-control-sm" asp-for="Codigo" />
+                </div>
+                <div class="col-md-6">
+                    <label>Tipo: </label>
+                    <input type="text" class="form-control form-control-sm" asp-for="Tipo" disabled="disabled" />
+                </div>
+
+                <div class="col-md-12">
+                    <label>Nombre: <span class="text-danger">(*)</span></label>
+                    <input type="text" class="form-control form-control-sm" asp-for="Nombre" />
+                </div>
+                <div class="col-md-12">
+                    <label>Dirección: </label>
+                    <input type="text" class="form-control form-control-sm" asp-for="Direccion" />
+                </div>
+                <div class="col-md-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="Activo" />
+                        <label class="form-check-label" asp-for="Activo">¿Se encuentra activo?</label>
+                    </div>
+                </div>
+                <div class="col-12" id="mensajeEditar"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"><span class="fa fa-times"></span>&nbsp; Cancelar</button>
+            <button type="button" class="btn btn-sm btn-primary" id="btnGuardar"><span class="fa fa-save"></span>&nbsp; Guardar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var _nuevo = {
+        ObtenerModelo: () => {
+            var model = {
+                id: @Model.Id,
+                codigo: $('#Codigo').val(),
+                nombre: $('#Nombre').val(),
+                direccion: $('#Direccion').val(),
+                activo: $('#Activo').prop('checked'),
+            }
+
+            return model
+        },
+    }
+
+    $(function () {
+        $('#btnGuardar').click(function () {
+            var model = _nuevo.ObtenerModelo()
+
+            $.ajax({
+                method: 'POST',
+                url: '/General/Almacen/Editar',
+                data: model,
+                beforeSend: () => {
+                    $('#btnGuardar').attr('disabled', 'disabled')
+                    helper.wait.append('#mensajeEditar')
+                },
+                complete: () => {
+                    $('#btnGuardar').removeAttr('disabled')
+                    helper.wait.remove('#mensajeEditar')
+                },
+                success: () => {
+                    @string.Format("{0}()", callBack)
+                },
+                error: (data) => {
+                    helper.error.show('#mensajeEditar', data.responseText)
+                }
+            })
+        })
+    })
+
+</script>

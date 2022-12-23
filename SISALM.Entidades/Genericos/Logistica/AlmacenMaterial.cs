@@ -8,7 +8,7 @@ namespace SISALM.Entidades.Logistica
         public int AlmacenId { get; set; }
         public int MaterialId { get; set; }
 
-        public DateOnly? Periodo { get; set; }
+        public DateTime? Periodo { get; set; }
 
         public decimal Cantidad { get; set; }
         public decimal Reservado { get; set; }

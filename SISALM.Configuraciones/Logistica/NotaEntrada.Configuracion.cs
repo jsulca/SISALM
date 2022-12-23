@@ -18,6 +18,7 @@
             modelBuilder.Property(x => x.Anio).HasColumnName("anio");
             modelBuilder.Property(x => x.Mes).HasColumnName("mes");
 
+            //modelBuilder.Property(x => x.FechaEntrega).HasColumnName("fechaentrega").HasColumnType("date");
             modelBuilder.Property(x => x.FechaEntrega).HasColumnName("fechaentrega");
             modelBuilder.Property(x => x.NroComprobante).HasColumnName("nrocomprobante");
 

@@ -11,8 +11,8 @@
             modelBuilder.Property(x => x.AlmacenId).HasColumnName("almacenid");
             modelBuilder.Property(x => x.MaterialId).HasColumnName("materialid");
 
-            modelBuilder.Property(x => x.Cantidad).HasColumnName("cantidad");
-            modelBuilder.Property(x => x.Precio).HasColumnName("precio");
+            modelBuilder.Property(x => x.Cantidad).HasColumnName("cantidad").HasPrecision(18, 2);
+            modelBuilder.Property(x => x.Precio).HasColumnName("precio").HasPrecision(18, 2);
 
             modelBuilder.HasOne(x => x.NotaSalida).WithMany(x => x.Materiales).IsRequired();
             modelBuilder.HasOne(x => x.Almacen).WithMany(x => x.NotasSalida).IsRequired();

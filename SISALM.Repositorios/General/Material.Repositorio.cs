@@ -4,10 +4,31 @@
     {
         public MaterialRepositorio(SISALMContexto contexto) : base(contexto) { }
 
-        public Task<List<Material>> ListarPorPaginaAsync(MaterialFiltro? filtro, int pageSize, int pageIndex)
-            => QueryLista(filtro).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+        public async Task<List<Material>> ListarPorPaginaAsync(MaterialFiltro? filtro, int pageIndex, int pageSize)
+        {
+            List<Material> lista = await QueryLista(filtro).OrderByDescending(x => x.Id).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            if (lista.Count > 0)
+            {
+                int[] unidadMedidaIds = lista.Select(x => x.UnidadMedidaId).ToArray();
+                List<MetaDato> metaDatos = await _contexto.MetaDato.Where(x => unidadMedidaIds.Contains(x.Id)).ToListAsync();
+                foreach (var item in lista)
+                    item.UnidadMedida = metaDatos.SingleOrDefault(x => x.Id == item.UnidadMedidaId);
+            }
+            return lista;
+        }
 
         public Task<int> ContarAsync(MaterialFiltro? filtro) => QueryLista(filtro).CountAsync();
+
+        public async Task<Material?> BuscarPorIdAsync(int id)
+        {
+            var source = _contexto.Material.Where(x => x.Id == id);
+            Material? entidad = await source.SingleOrDefaultAsync();
+
+            if (entidad != null)
+                entidad.UnidadMedida = await _contexto.MetaDato.SingleOrDefaultAsync(x => x.Id == entidad.UnidadMedidaId);
+
+            return entidad;
+        }
 
         #region Funciones
 

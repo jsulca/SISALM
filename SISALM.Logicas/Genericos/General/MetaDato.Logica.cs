@@ -13,16 +13,28 @@ namespace SISALM.Logicas.General
             _contexto = contexto;
         }
 
-        public async Task<List<MetaDato>> ListarPorPaginaAsync(MetaDatoFiltro? filtro, int pageSize, int pageIndex)
+        public async Task<List<MetaDato>> ListarPorPaginaAsync(MetaDatoFiltro? filtro, int pageIndex, int pageSize)
         {
             _repositorio = new(_contexto);
-            return await _repositorio.ListarPorPaginaAsync(filtro, pageSize, pageIndex);
+            return await _repositorio.ListarPorPaginaAsync(filtro, pageIndex, pageSize);
+        }
+
+        public async Task<List<MetaDato>> ListarAsync(MetaDatoFiltro? filtro)
+        {
+            _repositorio = new(_contexto);
+            return await _repositorio.ListarAsync(filtro);
         }
 
         public async Task<int> ContarAsync(MetaDatoFiltro? filtro)
         {
             _repositorio = new(_contexto);
             return await _repositorio.ContarAsync(filtro);
+        }
+
+        public async Task<MetaDato?> BuscarPorIdAsync(int id)
+        {
+            _repositorio = new(_contexto);
+            return await _repositorio.GetOneAsync(x => x.Id == id);
         }
 
         public async Task GuardarAsync(MetaDato entidad)
@@ -43,7 +55,7 @@ namespace SISALM.Logicas.General
                 item.Nombre = entidad.Nombre;
                 item.Activo = entidad.Activo;
 
-                _repositorio.Save(item);
+                _repositorio.Update(item);
                 await _contexto.SaveChangesAsync();
             }
         }

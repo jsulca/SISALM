@@ -13,16 +13,22 @@ namespace SISALM.Logicas.General
             _contexto = contexto;
         }
 
-        public async Task<List<Almacen>> ListarPorPaginaAsync(AlmacenFiltro? filtro, int pageSize, int pageIndex)
+        public async Task<List<Almacen>> ListarPorPaginaAsync(AlmacenFiltro? filtro, int pageIndex, int pageSize)
         {
             _repositorio = new(_contexto);
-            return await _repositorio.ListarPorPaginaAsync(filtro, pageSize, pageIndex);
+            return await _repositorio.ListarPorPaginaAsync(filtro, pageIndex, pageSize);
         }
 
         public async Task<int> ContarAsync(AlmacenFiltro? filtro)
         {
             _repositorio = new(_contexto);
             return await _repositorio.ContarAsync(filtro);
+        }
+
+        public async Task<Almacen?> BuscarPorIdAsync(int id)
+        {
+            _repositorio = new(_contexto);
+            return await _repositorio.GetOneAsync(x => x.Id == id);
         }
 
         public async Task GuardarAsync(Almacen entidad)
@@ -44,7 +50,7 @@ namespace SISALM.Logicas.General
                 item.Activo = entidad.Activo;
                 item.Direccion = entidad.Direccion;
 
-                _repositorio.Save(item);
+                _repositorio.Update(item);
                 await _contexto.SaveChangesAsync();
             }
         }

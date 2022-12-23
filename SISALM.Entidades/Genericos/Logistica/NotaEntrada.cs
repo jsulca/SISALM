@@ -16,7 +16,7 @@ namespace SISALM.Entidades.Logistica
         public int Anio { get; set; }
         public int Mes { get; set; }
 
-        public DateOnly FechaEntrega { get; set; }
+        public DateTime FechaEntrega { get; set; }
         public string? NroComprobante { get; set; }
 
         public NotaSalida? NotaSalida { get; set; }

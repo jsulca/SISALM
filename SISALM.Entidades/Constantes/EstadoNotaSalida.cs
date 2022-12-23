@@ -3,7 +3,7 @@
     public enum EstadoNotaSalida
     {
         RESERVADO,
-        REGISTRADO,
+        FINALIZADO,
         ANULADO
     }
 }

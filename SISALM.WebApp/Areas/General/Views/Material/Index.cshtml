@@ -1,5 +1,185 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewBag.Title = "Lista de MetaDatos";
+
+    List<MetaDato> unidadMedidas = ViewBag.UnidadMedidas;
+
+    var selectUnidadMedida = new SelectList(unidadMedidas, "Id", "Nombre");
+    var selectClasificacion = Html.GetEnumSelectList<ClasificacionMaterial>();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">@ViewBag.Title</h5>
+                    <button type="button" class="btn btn-sm btn-primary" id="btnNuevo" title="Nuevo"><span class="fa fa-plus"></span></button>
+                </div>
+
+                <h6 class="card-subtitle mb-2 text-muted">Filtros</h6>
+                <div class="row g-2" id="Filtros">
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="CÓDIGO" id="FCodigo" />
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control form-control-sm" placeholder="NOMBRE" id="FNombre" />
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select form-select-sm" asp-items="selectUnidadMedida" id="FUnidadMedidaId">
+                            <option value="">TODOS</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select form-select-sm" asp-items="selectClasificacion" id="FClasificacion">
+                            <option value="">TODOS</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12" id="mensaje"></div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="tblIndex" class="table table-bordered table-sm table-hover text-no-wrap"
+                                   data-pagesize="2"
+                                   data-pageindex="0"
+                                   data-totalrows="0"
+                                   data-function="index.Listar"
+                                   data-paginator="#paginator">
+                                <thead>
+                                    <tr class="text-center text-uppercase table-warning">
+                                        <th scope="col" width="50"></th>
+                                        <th scope="col" width="50">#</th>
+                                        <th scope="col" width="150">CÓDIGO</th>
+                                        <th scope="col">NOMBRE</th>
+                                        <th scope="col" width="150">UNIDA MEDIDA</th>
+                                        <th scope="col" width="80">CLASIF.</th>
+                                        <th scope="col" width="80">ACTIVO</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                        <div id="paginator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container"></div>
+</div>
+
+@section scripts {
+    <script>
+        //const modalVentana = new bootstrap.Modal(document.getElementById('modal-ventana'))
+        var index = {
+            Listar: (page) => {
+                var table = $('#tblIndex')
+                var model = {
+                    'filtro.Codigo': $("#FCodigo").val(),
+                    'filtro.Nombre': $("#FNombre").val(),
+                    'filtro.Clasificacion': $("#FClasificacion").val(),
+                    'filtro.UnidadMedidaId': $("#FUnidadMedidaId").val(),
+                    'pageIndex': page,
+                    'pageSize': table.data('pagesize')
+                };
+
+                $.ajax({
+                    url: "/General/Material/Listar",
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        helper.wait.append('#mensaje')
+                    },
+                    complete: function () {
+                        helper.wait.remove('#mensaje')
+                    },
+                    success: function (data) {
+                        table.data('pageindex', page);
+                        table.data('totalrows', data.totalRows);
+                        index.GenerarTabla(table, data.lista);
+                        if (data.totalRows == 0) table.append('<tr><td colspan="17" class="text-center text-bold">NO EXISTEN REGISTROS</td></tr>');
+                    },
+                    error: function (data) {
+                        helper.error.show('#mensaje', data.responseText);
+                    }
+                });
+            },
+            GenerarTabla: (table, lista) => {
+                var tbody = table.children('tbody');
+                tbody.children('tr').remove();
+                var _rows = '';
+                var _nro = table.data('pagesize') * table.data('pageindex')
+
+                lista.forEach(({ id, codigo, nombre, activo, unidadMedida, clasificacion }) => {
+                    _rows += `<tr>
+                                <td class="text-center"><a href="javascript:void(0)" class="editar text-warning" data-id="${id}" title="Editar"><span class="fa fa-pencil-alt"></span></a></td>
+                                <td class="text-end">${++_nro}</td>
+                                <td class="text-center">${codigo}</td>
+                                <td>${nombre}</td>
+                                <td class="text-center">${unidadMedida.nombre}</td>
+                                <td class="text-center">${CLASIFICACIONMATERIAL[clasificacion] || ''} </td>
+                                <td class="text-center text-${activo ? 'success' : 'danger'}">${activo ? 'SI' : 'NO'}</td>
+                            </tr>`
+                })
+
+                helper.pagination.update(table);
+                tbody.append(_rows);
+            },
+            AbrirModal: (url, data) => {
+                $.ajax({
+                    type: "GET",
+                    url,
+                    data,
+                    beforeSend: function () {
+                        helper.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show')
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        helper.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            Set: () => {
+                $('#modal-ventana').modal('hide');
+                index.Listar($('#tblIndex').data('pageindex'))
+            }
+        }
+
+
+        $(function () {
+            index.Listar(0)
+
+            $('#tblIndex tbody').delegate('a.editar', 'click', function () {
+                var id = this.dataset.id
+                index.AbrirModal('/General/Material/Editar', { id, callBack: 'index.Set' })
+            })
+
+            $('#Filtros input[type="text"]').keypress(function (e) {
+                var keyCode = e.keyCode || event.keyCode
+                if (keyCode == 13) index.Listar(0)
+            })
+
+            $('#Filtros select').change(function (e) {
+                index.Listar(0)
+            })
+
+            $('#btnNuevo').click(function () {
+                index.AbrirModal('/General/Material/Nuevo', { callBack: 'index.Set' })
+            })
+
+        })
+    </script>
 }

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using SISALM.Contextos;
 using SISALM.Logicas.General;
 using SISALM.Logicas.Servicios.General;
-using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,14 +23,13 @@ var configuration = builder.Configuration;
 
 services.AddDbContext<SISALMContexto>(options =>
 {
-    //options.UseNpgsql(configuration.GetConnectionString("FIVESYS")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-    options.UseSqlServer(configuration.GetConnectionString("SISALM")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    options.UseNpgsql(configuration.GetConnectionString("SISALM_PG")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    //options.UseSqlServer(configuration.GetConnectionString("SISALM")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 
 #endregion
 
 #region Logicas
-
 
 services.AddScoped<IMaterialServicio, MaterialLogica>()
     .AddScoped<IMetaDatoServicio, MetaDatoLogica>()
@@ -55,7 +53,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
 
 #region Rutas MVC
 

@@ -4,8 +4,8 @@
     {
         public AlmacenRepositorio(SISALMContexto contexto) : base(contexto) { }
 
-        public Task<List<Almacen>> ListarPorPaginaAsync(AlmacenFiltro? filtro, int pageSize, int pageIndex)
-            => QueryLista(filtro).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+        public Task<List<Almacen>> ListarPorPaginaAsync(AlmacenFiltro? filtro, int pageIndex, int pageSize)
+            => QueryLista(filtro).OrderByDescending(x => x.Id).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 
         public Task<int> ContarAsync(AlmacenFiltro? filtro) => QueryLista(filtro).CountAsync();
 

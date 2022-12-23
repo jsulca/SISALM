@@ -1,0 +1,17 @@
+﻿<div class="alert alert-danger alert-dismissible text-sm mb-0 pb-0">
+    <h6><i class="icon fa fa-ban"></i> Error!</h6>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <strong>Resuelva las siguientes inconsistencias</strong>
+        <div asp-validation-summary="All"></div>
+    }
+    else if (ViewBag.Message != null)
+    {
+        <label>@ViewBag.Message</label>
+    }
+    else
+    {
+        <label>Algo salió mal y no estamos seguros qué, por favor inténtelo más tarde o contácte al administrador del sistema.</label>
+    }
+</div>

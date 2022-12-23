@@ -1,5 +1,6 @@
 ﻿using SISALM.Logicas.Servicios.General;
 using SISALM.Repositorios.General;
+using System.Linq.Expressions;
 
 namespace SISALM.Logicas.General
 {
@@ -13,10 +14,10 @@ namespace SISALM.Logicas.General
             _contexto = contexto;
         }
 
-        public async Task<List<Material>> ListarPorPaginaAsync(MaterialFiltro? filtro, int pageSize, int pageIndex)
+        public async Task<List<Material>> ListarPorPaginaAsync(MaterialFiltro? filtro, int pageIndex, int pageSize)
         {
             _repositorio = new(_contexto);
-            return await _repositorio.ListarPorPaginaAsync(filtro, pageSize, pageIndex);
+            return await _repositorio.ListarPorPaginaAsync(filtro, pageIndex, pageSize);
         }
 
         public async Task<int> ContarAsync(MaterialFiltro? filtro)
@@ -24,6 +25,19 @@ namespace SISALM.Logicas.General
             _repositorio = new(_contexto);
             return await _repositorio.ContarAsync(filtro);
         }
+
+        public async Task<Material?> BuscarPorIdAsync(int id)
+        {
+            _repositorio = new(_contexto);
+            return await _repositorio.BuscarPorIdAsync(id);
+        }
+
+       public async Task<int> CountByAsync(Expression<Func<Material, bool>> predicate)
+        {
+            _repositorio = new(_contexto);
+            return await _repositorio.CountByAsync(predicate);
+        }
+
 
         public async Task GuardarAsync(Material entidad)
         {
@@ -46,7 +60,7 @@ namespace SISALM.Logicas.General
                 item.Nombre = entidad.Nombre;
                 item.Activo = entidad.Activo;
 
-                _repositorio.Save(item);
+                _repositorio.Update(item);
                 await _contexto.SaveChangesAsync();
             }
         }

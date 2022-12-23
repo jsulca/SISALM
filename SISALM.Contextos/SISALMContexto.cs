@@ -31,7 +31,7 @@ namespace SISALM.Contextos
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            #region General
+            #region General 
 
             MaterialConfiguracion.Configure(modelBuilder.Entity<Material>());
             AlmacenConfiguracion.Configure(modelBuilder.Entity<Almacen>());
@@ -47,7 +47,7 @@ namespace SISALM.Contextos
             NotaSalidaMaterialConfiguracion.Configure(modelBuilder.Entity<NotaSalidaMaterial>());
             AlmacenMaterialConfiguracion.Configure(modelBuilder.Entity<AlmacenMaterial>());
             MovimientoConfiguracion.Configure(modelBuilder.Entity<Movimiento>());
-            
+
             #endregion
 
             base.OnModelCreating(modelBuilder);
