@@ -13,3 +13,16 @@ const CLASIFICACIONMATERIAL = {
     1: "B",
     2: "C",
 }
+
+const ESTADONOTAENTRADA = {
+    0: "FINALIZADO",
+    1: "ANULADO"
+}
+
+const TIPONOTAENTRADA = {
+    0: "COMPRA A PROV.",
+    1: "AJUSTE DE INV.",
+    2: "ANULACION DE NS",
+    3: "TRASLADO",
+    4: "COMPRA SIN OC",
+}

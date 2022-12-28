@@ -19,6 +19,12 @@ namespace SISALM.Logicas.General
             return await _repositorio.ListarPorPaginaAsync(filtro, pageIndex, pageSize);
         }
 
+        public async Task<List<Almacen>> ListarAsync(AlmacenFiltro? filtro)
+        {
+            _repositorio = new(_contexto);
+            return await _repositorio.ListarAsync(filtro);
+        }
+
         public async Task<int> ContarAsync(AlmacenFiltro? filtro)
         {
             _repositorio = new(_contexto);

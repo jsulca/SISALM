@@ -11,8 +11,4 @@
     <ProjectReference Include="..\SISALM.Entidades\SISALM.Entidades.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Logistica\" />
-  </ItemGroup>
-
 </Project>

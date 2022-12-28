@@ -32,7 +32,7 @@
                     <div class="col-12">
                         <div class="table-responsive">
                             <table id="tblIndex" class="table table-bordered table-sm table-hover text-no-wrap"
-                                   data-pagesize="2"
+                                   data-pagesize="15"
                                    data-pageindex="0"
                                    data-totalrows="0"
                                    data-function="index.Listar"
@@ -67,7 +67,6 @@
 
 @section scripts {
     <script>
-        //const modalVentana = new bootstrap.Modal(document.getElementById('modal-ventana'))
         var index = {
             Listar: (page) => {
                 var table = $('#tblIndex')

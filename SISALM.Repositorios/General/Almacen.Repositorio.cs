@@ -9,6 +9,8 @@
 
         public Task<int> ContarAsync(AlmacenFiltro? filtro) => QueryLista(filtro).CountAsync();
 
+        public Task<List<Almacen>> ListarAsync(AlmacenFiltro? filtro) => QueryLista(filtro).ToListAsync();
+
         #region Funciones
 
         private IQueryable<Almacen> QueryLista(AlmacenFiltro? filtro = null)

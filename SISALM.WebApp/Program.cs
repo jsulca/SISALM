@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using SISALM.Contextos;
 using SISALM.Logicas.General;
+using SISALM.Logicas.Logistica;
 using SISALM.Logicas.Servicios.General;
+using SISALM.Logicas.Servicios.Logistica;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,8 @@ services.AddDbContext<SISALMContexto>(options =>
 services.AddScoped<IMaterialServicio, MaterialLogica>()
     .AddScoped<IMetaDatoServicio, MetaDatoLogica>()
     .AddScoped<IAlmacenServicio, AlmacenLogica>();
+
+services.AddScoped<INotaEntradaServicio, NotaEntradaLogica>();
 
 #endregion
 

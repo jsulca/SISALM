@@ -4,6 +4,7 @@ using SISALM.Entidades.General;
 using SISALM.Logicas.Servicios.General;
 using SISALM.WebApp.Areas.General.Models;
 using SISALM.WebApp.Commons.Filtros;
+using System.Dynamic;
 using System.Net;
 
 namespace SISALM.WebApp.Areas.General.Controllers
@@ -114,6 +115,23 @@ namespace SISALM.WebApp.Areas.General.Controllers
             }
         }
 
+        public async Task<IActionResult> Seleccionar(string callBack = "SetMaterial", bool muchos = true)
+        {
+            try
+            {
+                List<MetaDato> unidadMedidas = await _metaDatoServicio.ListarAsync(new MetaDatoFiltro { Activo = true, Tipo = Entidades.Constantes.TipoMetaDato.UNIDAD_MEDIDA });
+                ViewBag.CallBack = callBack;
+                ViewBag.UnidadMedidas = unidadMedidas;
+                return PartialView(muchos ? "_SeleccionarMuchos" : "_SeleccionarUno");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = ex.Message;
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return PartialView("_Error");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Editar(MaterialModel.Editar model)
         {
@@ -177,6 +195,7 @@ namespace SISALM.WebApp.Areas.General.Controllers
                 return PartialView("_Error");
             }
         }
+
 
         #endregion
 

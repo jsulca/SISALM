@@ -1,0 +1,143 @@
+﻿@model NotaEntrada
+@{
+    ViewBag.Title = "Nueva Nota de Entrada";
+
+    List<Almacen> almacenes = ViewBag.Almacenes;
+
+    TipoNotaEntrada[] tipos = new TipoNotaEntrada[] { TipoNotaEntrada.COMPRA_A_PROVEEDORES, TipoNotaEntrada.AJUSTE_DE_INVENTARIO, TipoNotaEntrada.TRASLADO, TipoNotaEntrada.COMPRA_SIN_OC };
+
+    var selectTipo = new SelectList(tipos);
+    var selectAlmacen = new SelectList(almacenes, "Id", "Codigo");
+}
+
+<div class="row g-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">@ViewBag.Title</h5>
+                </div>
+                <div class="row g-2">
+                    <div class="col-sm-4">
+                        <label>Código: </label>
+                        <input type="text" class="form-control form-control-sm" placeholder="AUTOGENERABLE" id="FCodigo" disabled="disabled" />
+                    </div>
+                    <div class="col-sm-4">
+                        <label>Tipo: <span class="text-danger">(*)</span></label>
+                        <select class="form-select form-select-sm" asp-items="selectTipo" id="FTipo"></select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label>Estado: </label>
+                        <input type="text" asp-for="Estado" class="form-select form-select-sm" disabled="disabled" />
+                    </div>
+                    <div class="col-sm-12">
+                        <label>Descripción: <span class="text-danger">(*)</span></label>
+                        <input type="text" class="form-control form-control-sm" placeholder="DESCRIPCIÓN" id="FDescripcion" />
+                    </div>
+                    <div class="col-12" id="mensaje"></div>
+
+                    <div class="col-12 d-grid gap-2 d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary" id="btnGuardar" title="Guardar"><span class="fa fa-save"></span>&nbsp; Guardar</button>
+                        <a href="/Logistica/NotaEntrada/Index" class="btn btn-danger" title="Cancelar"><span class="fa fa-times"></span>&nbsp; Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">Materiales</h5>
+                </div>
+                <div class="row g-2">
+                    <div class="col-12 d-flex justify-content-center">
+                        <button type="button" class="btn btn-info" id="btnBuscarMaterial" title="Buscar Material"><span class="fa fa-search"></span>&nbsp; Buscar Material</button>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="tblMateriales" class="table table-bordered table-sm table-hover text-no-wrap">
+                                <thead>
+                                    <tr class="text-center text-uppercase table-info">
+                                        <th scope="col" width="50"></th>
+                                        <th scope="col" width="50">#</th>
+                                        <th scope="col" width="120">ALMACEN</th>
+                                        <th scope="col" width="120">CÓDIGO</th>
+                                        <th scope="col">NOMBRE</th>
+                                        <th scope="col" width="120">CANTIDAD</th>
+                                        <th scope="col" width="120">UNI. MED.</th>
+                                        <th scope="col" width="120">PRECIO</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container"></div>
+</div>
+
+<template id="template">
+    <select class="form-select form-select-sm almacenid" asp-items="selectAlmacen"></select>
+</template>
+
+@section scripts {
+    <script>
+        var nuevo = {
+            AbrirModal: (url, data) => {
+                $.ajax({
+                    type: "GET",
+                    url,
+                    data,
+                    beforeSend: function () {
+                        helper.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show')
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        helper.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            SetMateriales: (items) => {
+                $('#modal-ventana').modal('hide');
+                var selectAlmacen = document.querySelector('#template').content.querySelector('select')
+
+                var rows = ''
+                var cantidad = $('#tblMateriales tbody tr').length
+
+                items.forEach(({ id, codigo, nombre, unidadMedidaNombre }) => {
+                    rows += `<tr data-materialid="${id}">
+                                <td class="text-center"><a href="javascript:void(0)" class="text-danger"><span class="fa fa-trash"></span></a></td>
+                                <td class="text-end">${++cantidad}</td>
+                                <td>${selectAlmacen.outerHTML}</td>
+                                <td class="text-center">${codigo}</td>
+                                <td>${nombre}</td>
+                                <td><input type="number" class="form-control form-control-sm text-end cantidad" type="number" /></td>
+                                <td>${unidadMedidaNombre}</td>
+                                <td><input type="number" class="form-control form-control-sm text-end precio" type="number" /></td>
+                            </tr>`
+                })
+
+                if(rows != '') 
+                    $('#tblMateriales tbody').append(rows)
+            }
+        }
+
+        $(function () {
+            $('#btnBuscarMaterial').click(function () {
+                nuevo.AbrirModal('/General/Material/Seleccionar', { callBack: 'nuevo.SetMateriales' })    
+            })
+        
+        })
+    </script>
+}

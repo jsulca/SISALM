@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "Seleccionar Materiales";
+    List<MetaDato> unidadMedidas = ViewBag.UnidadMedidas;
+    string callBack = ViewBag.CallBack;
+
+    var selectUnidadMedida = new SelectList(unidadMedidas, "Id", "Nombre");
+    var selectClasificacion = Html.GetEnumSelectList<ClasificacionMaterial>();
+}
+
+<div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@ViewBag.Title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row g-2" id="FiltrosSeleccionar">
+                <div class="col-sm-2">
+                    <input type="text" class="form-control form-control-sm" placeholder="CÓDIGO" id="FCodigo" />
+                </div>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control form-control-sm" placeholder="NOMBRE" id="FNombre" />
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-select form-select-sm" asp-items="selectUnidadMedida" id="FUnidadMedidaId">
+                        <option value="">TODOS</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-select form-select-sm" asp-items="selectClasificacion" id="FClasificacion">
+                        <option value="">TODOS</option>
+                    </select>
+                </div>
+                <div class="col-sm-12" id="mensajeSeleccionar"></div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table id="tblSeleccionar" class="table table-bordered table-sm table-hover text-no-wrap"
+                               data-pagesize="10"
+                               data-pageindex="0"
+                               data-totalrows="0"
+                               data-function="_seleccionarMuchos.Listar"
+                               data-paginator="#paginatorSeleccionar">
+                            <thead>
+                                <tr class="text-center text-uppercase table-warning">
+                                    <th scope="col" width="50"></th>
+                                    <th scope="col" width="50">#</th>
+                                    <th scope="col" width="150">CÓDIGO</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col" width="150">UNIDA MEDIDA</th>
+                                    <th scope="col" width="80">CLASIF.</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    <div id="paginatorSeleccionar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"><span class="fa fa-times"></span>&nbsp; Cancelar</button>
+            <button type="button" class="btn btn-sm btn-primary" id="btnAceptarSeleccionar"><span class="fa fa-check"></span>&nbsp; Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var _seleccionarMuchos = {
+        Listar: (page) => {
+            var table = $('#tblSeleccionar')
+            var model = {
+                'filtro.Codigo': $("#FiltrosSeleccionar #FCodigo").val(),
+                'filtro.Nombre': $("#FiltrosSeleccionar #FNombre").val(),
+                'filtro.Clasificacion': $("#FiltrosSeleccionar #FClasificacion").val(),
+                'filtro.UnidadMedidaId': $("#FiltrosSeleccionar #FUnidadMedidaId").val(),
+                'filtro.Activo': true,
+                'pageIndex': page,
+                'pageSize': table.data('pagesize')
+            };
+
+            $.ajax({
+                url: "/General/Material/Listar",
+                type: "GET",
+                data: model,
+                dataType: "json",
+                beforeSend: function () {
+                    helper.wait.append('#mensajeSeleccionar')
+                },
+                complete: function () {
+                    helper.wait.remove('#mensajeSeleccionar')
+                },
+                success: function (data) {
+                    table.data('pageindex', page);
+                    table.data('totalrows', data.totalRows);
+                    _seleccionarMuchos.GenerarTabla(table, data.lista);
+                    if (data.totalRows == 0) table.append('<tr><td colspan="6" class="text-center text-bold">NO EXISTEN REGISTROS</td></tr>');
+                },
+                error: function (data) {
+                    helper.error.show('#mensajeSeleccionar', data.responseText);
+                }
+            });
+        },
+        GenerarTabla: (table, lista) => {
+            var tbody = table.children('tbody');
+            tbody.children('tr').remove();
+            var _rows = '';
+            var _nro = table.data('pagesize') * table.data('pageindex')
+
+            lista.forEach(({ id, codigo, nombre, unidadMedida, clasificacion }) => {
+                _rows += `<tr>
+                            <td class="text-center"><input type="checkbox" value="${id}" /></td>
+                            <td class="text-end">${++_nro}</td>
+                            <td class="text-center">${codigo}</td>
+                            <td>${nombre}</td>
+                            <td class="text-center">${unidadMedida.nombre}</td>
+                            <td class="text-center">${CLASIFICACIONMATERIAL[clasificacion] || ''} </td>
+                        </tr>`
+            })
+
+            helper.pagination.update(table);
+            tbody.append(_rows);
+        },
+    }
+
+    $(function () {
+        _seleccionarMuchos.Listar(0)
+
+        $('#FiltrosSeleccionar input[type="text"]').keypress(function (e) {
+            var keyCode = e.keyCode || event.keyCode
+            if (keyCode == 13) _seleccionarMuchos.Listar(0)
+        })
+
+        $('#FiltrosSeleccionar select').change(function (e) {
+            _seleccionarMuchos.Listar(0)
+        })
+
+        $('#btnAceptarSeleccionar').click(function () {
+            var checks = $('#tblSeleccionar input[type="checkbox"]:checked')
+            if(checks.length > 0){
+                var items = []
+                var tr, tds
+
+                checks.each((i, input) => {
+                    tr = $(input).parents().eq(1)
+                    tds = tr.find('td')
+
+                    items.push({
+                        id: input.value,
+                        codigo: tds[2].innerText,
+                        nombre: tds[3].innerText,
+                        unidadMedidaNombre: tds[4].innerText,
+                        clasificacion: tds[5].innerText,
+                    })
+                })
+
+                @string.Format("{0}(items)", callBack)
+            } 
+        })
+    })
+
+</script>
