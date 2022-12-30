@@ -27,7 +27,10 @@ namespace SISALM.Contextos
 
         #endregion
 
-        public SISALMContexto(DbContextOptions<SISALMContexto> options) : base(options) { }
+        public SISALMContexto(DbContextOptions<SISALMContexto> options) : base(options)
+        {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

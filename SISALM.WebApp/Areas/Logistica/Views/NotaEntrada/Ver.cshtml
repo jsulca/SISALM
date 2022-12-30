@@ -1,0 +1,157 @@
+﻿@model NotaEntrada
+@{
+    ViewBag.Title = "Ver Nota de Entrada";
+}
+
+<div class="row g-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">@ViewBag.Title</h5>
+                </div>
+                <div class="row g-2">
+                    <div class="col-sm-4">
+                        <label>Código: </label>
+                        <input type="text" asp-for="Codigo" class="form-control form-control-sm" placeholder="AUTOGENERABLE" disabled="disabled" />
+                    </div>
+                    <div class="col-sm-4">
+                        <label>Tipo: </label>
+                        <input type="text" asp-for="Tipo" class="form-control form-control-sm" disabled="disabled" />
+                    </div>
+                    <div class="col-sm-4">
+                        <label>Estado: </label>
+                        <input type="text" asp-for="Estado" class="form-control form-control-sm" disabled="disabled" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label>Fecha de Entrega: </label>
+                        <input type="date" asp-for="FechaEntrega" class="form-control form-control-sm" disabled="disabled" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Nro. Comprobante: </label>
+                        <input type="text" asp-for="NroComprobante" class="form-control form-control-sm" disabled="disabled" />
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label>Descripción: </label>
+                        <input type="text" asp-for="Descripcion" class="form-control form-control-sm" disabled="disabled" />
+                    </div>
+                    <div class="col-12" id="mensaje"></div>
+
+                    <div class="col-12 d-grid gap-2 d-flex justify-content-center">
+                        @if(Model.Estado == EstadoNotaEntrada.FINALIZADO)
+                        {
+                            <button type="button" class="btn btn-danger" id="btnAnular" title="Anular"><span class="fa fa-times"></span>&nbsp; Anular</button>
+                        }
+                        <a href="/Logistica/NotaEntrada/Index" class="btn btn-light" title="Regresar"><span class="fa fa-chevron-left"></span>&nbsp; Regresar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">Materiales</h5>
+                </div>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="tblMateriales" class="table table-bordered table-sm table-hover text-no-wrap">
+                                <thead>
+                                    <tr class="text-center text-uppercase table-info">
+                                        <th scope="col" width="50">#</th>
+                                        <th scope="col" width="120">ALMACEN</th>
+                                        <th scope="col" width="120">CÓDIGO</th>
+                                        <th scope="col">NOMBRE</th>
+                                        <th scope="col" width="120">CANTIDAD</th>
+                                        <th scope="col" width="120">UNI. MED.</th>
+                                        <th scope="col" width="120">PRECIO</th>
+                                        <th scope="col" width="120">TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(Model.Materiales != null && Model.Materiales.Count > 0)
+                                    {
+                                        int i = 1;
+                                        decimal subTotal, total = 0;
+
+                                        foreach (var item in Model.Materiales)
+                                        {
+                                            subTotal = item.Cantidad * item.Precio;
+                                            total += subTotal;
+
+                                            <tr>
+                                                <td class="text-end">@i</td>
+                                                <td class="text-center">@item.Almacen?.Codigo</td>
+                                                <td class="text-center">@item.Material?.Codigo</td>
+                                                <td>@item.Material?.Nombre</td>
+                                                <td class="text-end">@item.Cantidad</td>
+                                                <td class="text-center">@item.Material?.UnidadMedida?.Codigo</td>
+                                                <td class="text-end">@item.Precio</td>
+                                                <td class="text-end">@subTotal.ToString("0.00")</td>
+                                            </tr>
+                                            i++;
+                                        }
+
+                                        <tr class="table-secondary">
+                                            <th class="text-end" colspan="7">TOTAL</th>
+                                            <th class="text-end">@total.ToString("0.00")</th>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        var nuevo = {
+
+        }
+
+        $(function () {
+            $('#btnAnular').click(function () {
+                const confirmConfig = sweetalert2.confirmationConfig({ title: '¿Esta seguro de anular la nota de entrada?' })
+
+                Swal.fire(confirmConfig).then((result) => {
+                    if (result.isConfirmed) {
+                        const model = { id: @Model.Id }
+
+                        $.ajax({
+                            method: 'POST',
+                            url: '/Logistica/NotaEntrada/Anular',
+                            data: model,
+                            beforeSend: () => {
+                                helper.wait.append('#mensaje')
+                                $('#btnAnular').attr('disabled', 'disabled')
+                            },
+                            complete: () => {
+                                helper.wait.remove('#mensaje')
+                                $('#btnAnular').removeAttr('disabled')
+                            },
+                            success: () => {
+                                const alertConfig = sweetalert2.alertConfig({ title: '¡Anulado!', icon: 'success', text: '¡La nota de entrada fue anulado!' })
+                                Swal.fire(alertConfig).then(() => {
+                                    location.reload()
+                                })
+                            },
+                            error: ({ responseText }) => {
+                                helper.error.show('#mensaje', responseText)
+                            }
+                        })
+                        
+                    }
+                })
+            })
+        })
+    </script>
+}

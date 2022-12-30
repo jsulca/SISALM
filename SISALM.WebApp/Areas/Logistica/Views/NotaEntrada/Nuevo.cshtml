@@ -24,15 +24,25 @@
                     </div>
                     <div class="col-sm-4">
                         <label>Tipo: <span class="text-danger">(*)</span></label>
-                        <select class="form-select form-select-sm" asp-items="selectTipo" id="FTipo"></select>
+                        <select asp-for="Tipo" class="form-select form-select-sm" asp-items="selectTipo"></select>
                     </div>
                     <div class="col-sm-4">
                         <label>Estado: </label>
-                        <input type="text" asp-for="Estado" class="form-select form-select-sm" disabled="disabled" />
+                        <input type="text" asp-for="Estado" class="form-control form-control-sm" disabled="disabled" />
                     </div>
+
+                    <div class="col-sm-6">
+                        <label>Fecha de Entrega: <span class="text-danger">(*)</span></label>
+                        <input type="date" asp-for="FechaEntrega" class="form-control form-control-sm" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Nro. Comprobante: </label>
+                        <input type="text" asp-for="NroComprobante" class="form-control form-control-sm" />
+                    </div>
+
                     <div class="col-sm-12">
                         <label>Descripción: <span class="text-danger">(*)</span></label>
-                        <input type="text" class="form-control form-control-sm" placeholder="DESCRIPCIÓN" id="FDescripcion" />
+                        <input type="text" asp-for="Descripcion" class="form-control form-control-sm" />
                     </div>
                     <div class="col-12" id="mensaje"></div>
 
@@ -90,6 +100,26 @@
 @section scripts {
     <script>
         var nuevo = {
+            ObtenerModelo: () => {
+                var model = {
+                    tipo: $('#Tipo').val(),
+                    fechaEntrega: $('#FechaEntrega').val(),
+                    nroComprobante: $('#NroComprobante').val(),
+                    descripcion: $('#Descripcion').val(),
+                    materiales: []
+                }
+
+                $.each($('#tblMateriales tbody tr'), function (i, tr) {
+                    model.materiales.push({
+                        materialid: tr.dataset.materialid,
+                        almacenid: $(tr).find('select.almacenid').val(),
+                        cantidad: $(tr).find('input.cantidad').val(),
+                        precio: $(tr).find('input.precio').val(),
+                    })
+                })
+
+                return model
+            },
             AbrirModal: (url, data) => {
                 $.ajax({
                     type: "GET",
@@ -135,9 +165,41 @@
 
         $(function () {
             $('#btnBuscarMaterial').click(function () {
-                nuevo.AbrirModal('/General/Material/Seleccionar', { callBack: 'nuevo.SetMateriales' })    
+                nuevo.AbrirModal('/General/Material/Seleccionar', { callBack: 'nuevo.SetMateriales' })
             })
-        
+
+            $('#btnGuardar').click(function () {
+                const confirmConfig = sweetalert2.confirmationConfig({ title: '¿Esta seguro de guardar la nota de entrada?' })
+
+                Swal.fire(confirmConfig).then((result) => {
+                    if (result.isConfirmed) {
+                        var model = nuevo.ObtenerModelo()
+
+                        $.ajax({
+                            method: 'POST',
+                            url: '/Logistica/NotaEntrada/Nuevo',
+                            data: model,
+                            beforeSend: () => {
+                                helper.wait.append('#mensaje')
+                                $('#btnGuardar').attr('disabled', 'disabled')
+                            },
+                            complete: () => {
+                                helper.wait.remove('#mensaje')
+                                $('#btnGuardar').removeAttr('disabled')
+                            },
+                            success: () => {
+                                const alertConfig = sweetalert2.alertConfig({ title: '¡Registrado!', icon: 'success', text: '¡La nota de entrada fue registrada!' })
+                                Swal.fire(alertConfig).then(() => {
+                                    location.href = '/Logistica/NotaEntrada/Index'
+                                })
+                            },
+                            error: ({ responseText }) => {
+                                helper.error.show('#mensaje', responseText)
+                            }
+                        })
+                    }
+                })
+            })
         })
     </script>
 }

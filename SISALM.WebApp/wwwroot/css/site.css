@@ -6,3 +6,7 @@
     font-size: smaller;
     vertical-align: middle;
 }
+
+.table th {
+    vertical-align: middle;
+}

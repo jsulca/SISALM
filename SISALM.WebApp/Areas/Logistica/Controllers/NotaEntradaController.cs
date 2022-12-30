@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using SISALM.Entidades.Filtros.Logistica;
 using SISALM.Entidades.General;
 using SISALM.Entidades.Logistica;
@@ -31,7 +32,11 @@ namespace SISALM.WebApp.Areas.Logistica.Controllers
             try
             {
                 List<Almacen> almacenes = await _almacenServicio.ListarAsync(new Entidades.Filtros.General.AlmacenFiltro { Activo = true });
-                NotaEntrada entidad = new() { Estado = Entidades.Constantes.EstadoNotaEntrada.FINALIZADO };
+                NotaEntrada entidad = new()
+                {
+                    Estado = Entidades.Constantes.EstadoNotaEntrada.FINALIZADO,
+                    FechaEntrega = DateTime.Today
+                };
 
                 ViewBag.Almacenes = almacenes;
                 return View(entidad);
@@ -72,6 +77,48 @@ namespace SISALM.WebApp.Areas.Logistica.Controllers
                 ViewBag.Message = ex.Message;
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return PartialView("_Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Anular(int id)
+        {
+            try
+            {
+                if (id <= 0) ModelState.AddModelError("Id", "Es necesario ingresar un identificador.");
+                if (ModelState.IsValid)
+                {
+                    NotaEntrada entidad = new() { Id = id };
+                    await _notaEntradaServicio.AnularAsync(entidad);
+
+                    return Ok(new { entidad.Id });
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return PartialView("_Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = ex.Message;
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return PartialView("_Error");
+            }
+        }
+
+        public async Task<IActionResult> Ver(int id)
+        {
+            try
+            {
+                NotaEntrada? entidad = await _notaEntradaServicio.BuscarPorIdAsync(id, true);
+                if (entidad == null) throw new Exception("La nota de entrada no se encuentra registrado.");
+                return View(entidad);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = ex.Message;
+                return View("Error");
             }
         }
 

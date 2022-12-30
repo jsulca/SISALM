@@ -25,7 +25,10 @@ namespace SISALM.Repositorios.Logistica
 
         private IQueryable<NotaEntradaMaterial> QueryLista(NotaEntradaMaterialFiltro? filtro = null)
         {
-            var source = _contexto.NotaEntradaMaterial.Include(x => x.Material).AsQueryable();
+            var source = _contexto.NotaEntradaMaterial
+                        .Include(x => x.Material)
+                        .Include(x => x.Almacen)
+                        .AsQueryable();
 
             if (filtro != null)
             {

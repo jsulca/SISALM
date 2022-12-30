@@ -37,7 +37,8 @@ services.AddScoped<IMaterialServicio, MaterialLogica>()
     .AddScoped<IMetaDatoServicio, MetaDatoLogica>()
     .AddScoped<IAlmacenServicio, AlmacenLogica>();
 
-services.AddScoped<INotaEntradaServicio, NotaEntradaLogica>();
+services.AddScoped<INotaEntradaServicio, NotaEntradaLogica>()
+    .AddScoped<IAlmacenMaterialServicio, AlmacenMaterialLogica>();
 
 #endregion
 

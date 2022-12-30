@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SISALM.Contextos;
@@ -11,9 +12,11 @@ using SISALM.Contextos;
 namespace SISALM.Contextos.Migrations
 {
     [DbContext(typeof(SISALMContexto))]
-    partial class SISALMContextoModelSnapshot : ModelSnapshot
+    [Migration("20221230015858_Modificar_NotaEntrada")]
+    partial class ModificarNotaEntrada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,5 +1,175 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewBag.Title = "Materiales en el Almacen";
+    List<MetaDato> unidadMedidas = ViewBag.UnidadMedidas;
+
+    var selectTipoAlmacen = Html.GetEnumSelectList<TipoAlmacen>();
+    var selectUnidadMedidaId = new SelectList(unidadMedidas, "Id", "Codigo");
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">@ViewBag.Title</h5>
+                </div>
+
+                <h6 class="card-subtitle mb-2 text-muted">Almacen</h6>
+                <div class="row g-2" id="Filtros">
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="CÓDIGO" id="FAlmacenCodigo" />
+                    </div>
+                    <div class="col-sm">
+                        <input type="text" class="form-control form-control-sm" placeholder="DESCRIPCIÓN" id="FAlmacenNombre" />
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select form-select-sm" asp-items="selectTipoAlmacen" id="FAlmacenTipo">
+                            <option value="">TODOS</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <h6 class="card-subtitle my-2 text-muted">Material</h6>
+                <div class="row g-2" id="Filtros">
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="CÓDIGO" id="FMaterialCodigo" />
+                    </div>
+                    <div class="col-sm">
+                        <input type="text" class="form-control form-control-sm" placeholder="NOMBRE" id="FMaterialNombre" />
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select form-select-sm" asp-items="selectUnidadMedidaId" id="FMaterialUnidadMedidaId">
+                            <option value="">TODOS</option>
+                        </select>
+                    </div>
+                    <div class="col-12" id="mensaje"></div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="tblIndex" class="table table-bordered table-sm table-hover text-no-wrap"
+                                   data-pagesize="15"
+                                   data-pageindex="0"
+                                   data-totalrows="0"
+                                   data-function="index.Listar"
+                                   data-paginator="#paginator">
+                                <thead class="text-center text-uppercase">
+                                    <tr class="table-warning">
+                                        <th scope="col" width="50" rowspan="2">#</th>
+                                        <th scope="col" colspan="3">ALMACEN</th>
+                                        <th scope="col" colspan="3">MATERIAL</th>
+                                        <th scope="col" rowspan="2" width="100">CANTIDAD</th>
+                                        <th scope="col" rowspan="2" width="100">PRECIO</th>
+                                        <th scope="col" rowspan="2" width="100">TOTAL</th>
+                                        <th scope="col" rowspan="2" width="100">PERIODO</th>
+                                    </tr>
+                                    <tr class="text-center table-warning">
+                                        <th scope="col" width="100">CÓDIGO</th>
+                                        <th scope="col">NOMBRE</th>
+                                        <th scope="col" width="80">TIPO</th>
+                                        <th scope="col" width="100">CÓDIGO</th>
+                                        <th scope="col">NOMBRE</th>
+                                        <th scope="col" width="80">UM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                        <div id="paginator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        //const modalVentana = new bootstrap.Modal(document.getElementById('modal-ventana'))
+        var index = {
+            Listar: (page) => {
+                var table = $('#tblIndex')
+                var model = {
+                    'filtro.AlmacenCodigo': $("#FAlmacenCodigo").val(),
+                    'filtro.AlmacenNombre': $("#FAlmacenNombre").val(),
+                    'filtro.AlmacenTipo': $("#FAlmacenTipo").val(),
+                    'filtro.MaterialCodigo': $("#FMaterialCodigo").val(),
+                    'filtro.MaterialNombre': $("#FMaterialNombre").val(),
+                    'filtro.MaterialUnidadMedidaId': $("#FMaterialUnidadMedidaId").val(),
+                    'pageIndex': page,
+                    'pageSize': table.data('pagesize')
+                };
+
+                $.ajax({
+                    url: "/Logistica/AlmacenMaterial/Listar",
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        helper.wait.append('#mensaje')
+                    },
+                    complete: function () {
+                        helper.wait.remove('#mensaje')
+                    },
+                    success: function (data) {
+                        table.data('pageindex', page);
+                        table.data('totalrows', data.totalRows);
+                        index.GenerarTabla(table, data.lista);
+                        if (data.totalRows == 0) table.append('<tr><td colspan="17" class="text-center text-bold">NO EXISTEN REGISTROS</td></tr>');
+                    },
+                    error: function (data) {
+                        helper.error.show('#mensaje', data.responseText);
+                    }
+                });
+            },
+            GenerarTabla: (table, lista) => {
+                var tbody = table.children('tbody');
+                tbody.children('tr').remove();
+                var _rows = '';
+                var _nro = table.data('pagesize') * table.data('pageindex')
+               
+                lista.forEach(({ id, almacen, material, cantidad, precio, precioTotal, periodo }) => {
+                    if(periodo) {
+                        periodo = new Date(periodo)
+                        periodo = `${periodo.getDate()}/${periodo.getMonth() + 1}/${periodo.getFullYear()}`
+                    }
+                    _rows += `<tr>
+                                        <td class="text-end">${++_nro}</td>
+                                        <td class="text-center">${almacen.codigo}</td>
+                                        <td>${almacen.nombre}</td>
+                                        <td class="text-center">${TIPOALMACEN[almacen.tipo]}</td>
+                                        <td class="text-center">${material.codigo}</td>
+                                        <td>${material.nombre}</td>
+                                        <td class="text-center">${material.unidadMedida.codigo}</td>
+                                        <td class="text-end">${cantidad}</td>
+                                        <td class="text-end">${precio}</td>
+                                        <td class="text-end">${precioTotal.toFixed(2)}</td>
+                                        <td class="text-center">${periodo || '-'}</td>
+                                    </tr>`
+                })
+
+                helper.pagination.update(table);
+                tbody.append(_rows);
+            },
+        }
+
+
+        $(function () {
+            index.Listar(0)
+
+            $('#Filtros input[type="text"]').keypress(function (e) {
+                var keyCode = e.keyCode || event.keyCode
+                if (keyCode == 13) index.Listar(0)
+            })
+
+            $('#Filtros select').change(function (e) {
+                index.Listar(0)
+            })
+        })
+    </script>
 }
