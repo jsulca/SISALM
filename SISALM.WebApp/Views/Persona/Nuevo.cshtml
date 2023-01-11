@@ -6,12 +6,16 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title text-primary">Nueva Persona</h5>
+                <h5 class="card-title text-primary">Nueva Persona @ViewBag.Mensaje</h5>
                 <h6 class="card-subtitle mb-2 text-muted">Formulario de Persona:</h6>
                 <div class="row gy-2">
                     <div class="col-12">
+                        <label>Mensaje: </label>
+                        <input type="text" class="form-control"  value="@ViewBag.Mensaje"/>
+                    </div>       
+                    <div class="col-12">
                         <label>Nombre: </label>
-                        <input type="text" class="form-control" asp-for="Nombre" />
+                        <input type="text" class="form-control"  asp-for="Nombre"/>
                     </div>
                     <div class="col-12">
                         <label>Apellido: </label>
@@ -32,7 +36,9 @@
                 </div>
                 <div class="d-flex justify-content-center mt-3 d-grid gap-2">
                     <button type="button" class="btn btn-success me-1" title="Guardar"><span class="fa fa-save"></span>&nbsp; Guardar</button>
-                    <a role="button" class="btn btn-light" title="Regresar"><span class="fa fa-chevron-left"></span>&nbsp; Regresar</a>
+                    <a role="button" class="btn btn-light" title="Regresar" asp-controller="Persona" asp-action="Index"><span class="fa fa-chevron-left"></span>&nbsp; Regresar</a>
+                    <a role="button" class="btn btn-light" title="Regresar" href="/Persona/Index"><span class="fa fa-chevron-left"></span>&nbsp; Regresar</a>
+
                 </div>
             </div>
         </div>
