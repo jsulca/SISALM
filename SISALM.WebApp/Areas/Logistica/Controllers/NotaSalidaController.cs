@@ -6,9 +6,13 @@ namespace SISALM.WebApp.Areas.Logistica.Controllers
     [ModuloLogisticaFiltro]
     public class NotaSalidaController : Controller
     {
+        #region Acciones
+
         public IActionResult Index()
         {
             return View();
         }
+
+        #endregion
     }
 }

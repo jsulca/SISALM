@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SISALM.Entidades.Filtros.Logistica;
 using SISALM.Entidades.General;
 using SISALM.Entidades.Logistica;
@@ -16,11 +15,13 @@ namespace SISALM.WebApp.Areas.Logistica.Controllers
     {
         private readonly INotaEntradaServicio _notaEntradaServicio;
         private readonly IAlmacenServicio _almacenServicio;
+        private readonly IAlmacenMaterialServicio _almacenMaterialServicio;
 
-        public NotaEntradaController(INotaEntradaServicio notaEntradaServicio, IAlmacenServicio almacenServicio)
+        public NotaEntradaController(INotaEntradaServicio notaEntradaServicio, IAlmacenServicio almacenServicio, IAlmacenMaterialServicio almacenMaterialServicio)
         {
             _notaEntradaServicio = notaEntradaServicio;
             _almacenServicio = almacenServicio;
+            _almacenMaterialServicio = almacenMaterialServicio;
         }
 
         #region Acciones
@@ -86,6 +87,53 @@ namespace SISALM.WebApp.Areas.Logistica.Controllers
             try
             {
                 if (id <= 0) ModelState.AddModelError("Id", "Es necesario ingresar un identificador.");
+                if(ModelState.IsValid)
+                {
+                    NotaEntrada? notaEntrada = await _notaEntradaServicio.BuscarPorIdAsync(id, true);
+                    if (notaEntrada == null) ModelState.AddModelError("Id", "La nota de entrada no existe.");
+                    else if (notaEntrada.Estado != Entidades.Constantes.EstadoNotaEntrada.FINALIZADO) ModelState.AddModelError("Estado", "La nota de entrada no se encuentra en el estado de FINALIZADO.");
+                    else
+                    {
+                        //TODO: VERIFICAR EL STOCK DE MATERIALES Y ALMACENES
+                        List<int> materialIds = new(),
+                            almacenIds = new();
+
+                        foreach (var item in notaEntrada.Materiales!)
+                        {
+                            materialIds.Add(item.MaterialId);
+                            almacenIds.Add(item.AlmacenId);
+                        }
+
+                        List<AlmacenMaterial> inventarios = await _almacenMaterialServicio.ListarAsync(new AlmacenMaterialFiltro
+                        {
+                            AlmacenIds = almacenIds.ToArray(),
+                            MaterialIds = materialIds.ToArray()
+                        });
+
+                        AlmacenMaterial? inventario;
+
+                        foreach (var item in notaEntrada.Materiales!)
+                        {
+                            switch (item.Almacen!.Tipo)
+                            {
+                                case Entidades.Constantes.TipoAlmacen.PROMEDIO:
+                                    inventario = inventarios.SingleOrDefault(x => x.AlmacenId == item.AlmacenId && x.MaterialId == item.MaterialId);
+
+                                    if (inventario == null) ModelState.AddModelError("Inventario", $"No existe el material {item.Material!.Codigo} en el almacen {item.Almacen!.Codigo}");
+                                    else if (inventario.Cantidad < item.Cantidad) ModelState.AddModelError("Inventario", $"No hay una existencia válida del material {item.Material!.Codigo} en el almacen {item.Almacen!.Codigo}");
+
+                                    break;
+                                case Entidades.Constantes.TipoAlmacen.PEPS:
+                                case Entidades.Constantes.TipoAlmacen.UEPS:
+                                    inventario = inventarios.SingleOrDefault(x => x.AlmacenId == item.AlmacenId && x.MaterialId == item.MaterialId && x.Precio == item.Precio && x.Periodo == notaEntrada.Registro);
+
+                                    if (inventario == null) ModelState.AddModelError("Inventario", $"No existe el material {item.Material!.Codigo} en el almacen {item.Almacen!.Codigo}");
+                                    else if (inventario.Cantidad < item.Cantidad) ModelState.AddModelError("Inventario", $"No hay una existencia válida del material {item.Material!.Codigo} en el almacen {item.Almacen!.Codigo}");
+                                    break;
+                            }
+                        }
+                    }
+                }
                 if (ModelState.IsValid)
                 {
                     NotaEntrada entidad = new() { Id = id };

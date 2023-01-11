@@ -4,5 +4,6 @@
     {
         Task<List<AlmacenMaterial>> ListarPorPaginaAsync(AlmacenMaterialFiltro? filtro, int pageIndex, int pageSize);
         Task<int> ContarAsync(AlmacenMaterialFiltro? filtro);
+        Task<List<AlmacenMaterial>> ListarAsync(AlmacenMaterialFiltro? filtro);
     }
 }

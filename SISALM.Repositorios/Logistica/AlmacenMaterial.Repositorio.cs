@@ -1,4 +1,5 @@
 ﻿using SISALM.Entidades.Filtros.Logistica;
+using System.Globalization;
 
 namespace SISALM.Repositorios.Logistica
 {
@@ -24,6 +25,23 @@ namespace SISALM.Repositorios.Logistica
 
         public Task<int> ContarAsync(AlmacenMaterialFiltro? filtro) => QueryLista(filtro).CountAsync();
 
+        public async Task<List<AlmacenMaterial>> ListarAsync(AlmacenMaterialFiltro? filtro)
+        {
+            List<AlmacenMaterial> lista = await QueryLista(filtro).ToListAsync();
+
+            if (lista.Count > 0)
+            {
+                int[] metaDatoIds = lista.Select(x => x.Material!.UnidadMedidaId).ToArray();
+                List<MetaDato> metaDatos = await _contexto.MetaDato.Where(x => metaDatoIds.Contains(x.Id)).ToListAsync();
+
+                foreach (var item in lista)
+                    item.Material!.UnidadMedida = metaDatos.SingleOrDefault(x => x.Id == item.Material!.UnidadMedidaId);
+            }
+
+            return lista;
+        }
+
+
         #region Funciones
 
         private IQueryable<AlmacenMaterial> QueryLista(AlmacenMaterialFiltro? filtro = null)
@@ -41,6 +59,8 @@ namespace SISALM.Repositorios.Logistica
                 if (!string.IsNullOrEmpty(filtro.MaterialNombre)) source = source.Where(x => x.Material!.Nombre.Contains(filtro.MaterialNombre));
                 if (filtro.MaterialUnidadMedidaId.HasValue) source = source.Where(x => x.Material!.UnidadMedidaId == filtro.MaterialUnidadMedidaId);
                 if (filtro.AlmacenTipo.HasValue) source = source.Where(x => x.Almacen!.Tipo == filtro.AlmacenTipo);
+                if (filtro.AlmacenIds != null && filtro.AlmacenIds.Length > 0) source = source.Where(x => filtro.AlmacenIds.Contains(x.AlmacenId));
+                if (filtro.MaterialIds != null && filtro.MaterialIds.Length > 0) source = source.Where(x => filtro.MaterialIds.Contains(x.MaterialId));
             }
 
             return source;

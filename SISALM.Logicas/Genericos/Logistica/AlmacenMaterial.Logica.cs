@@ -24,5 +24,11 @@ namespace SISALM.Logicas.Logistica
             _repositorio = new(_contexto);
             return _repositorio.ContarAsync(filtro);
         }
+
+        public Task<List<AlmacenMaterial>> ListarAsync(AlmacenMaterialFiltro? filtro)
+        {
+            _repositorio = new(_contexto);
+            return _repositorio.ListarAsync(filtro);
+        }
     }
 }
