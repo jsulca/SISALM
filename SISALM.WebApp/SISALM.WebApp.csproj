@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="Areas\General\Data\" />
     <Folder Include="Areas\Logistica\Data\" />
-    <Folder Include="Areas\Logistica\Models\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +41,10 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="Areas\General\Views\MetaDato\_Nuevo.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Areas\Logistica\Views\NotaSalida\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

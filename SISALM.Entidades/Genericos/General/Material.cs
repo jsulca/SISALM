@@ -18,5 +18,7 @@ namespace SISALM.Entidades.General
         public List<Movimiento>? Movimientos { get; set; }
         public List<NotaEntradaMaterial>? NotasEntrada { get; set; }
         public List<NotaSalidaMaterial>? NotasSalida { get; set; }
+
+        public List<NotaSalidaRetiro>? Retiros { get; set; }
     }
 }

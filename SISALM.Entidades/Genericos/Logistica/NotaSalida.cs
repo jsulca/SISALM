@@ -23,5 +23,7 @@ namespace SISALM.Entidades.Logistica
         public List<NotaEntrada>? NotasEntrada { get; set; }
         public List<Movimiento>? Movimientos { get; set; }
         public List<NotaSalidaMaterial>? Materiales { get; set; }
+
+        public List<NotaSalidaRetiro>? Retiros { get; set; }
     }
 }

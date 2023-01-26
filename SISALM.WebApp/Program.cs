@@ -34,11 +34,12 @@ services.AddDbContext<SISALMContexto>(options =>
 #region Logicas
 
 services.AddScoped<IMaterialServicio, MaterialLogica>()
-    .AddScoped<IMetaDatoServicio, MetaDatoLogica>()
-    .AddScoped<IAlmacenServicio, AlmacenLogica>();
+        .AddScoped<IMetaDatoServicio, MetaDatoLogica>()
+        .AddScoped<IAlmacenServicio, AlmacenLogica>();
 
 services.AddScoped<INotaEntradaServicio, NotaEntradaLogica>()
-    .AddScoped<IAlmacenMaterialServicio, AlmacenMaterialLogica>();
+        .AddScoped<IAlmacenMaterialServicio, AlmacenMaterialLogica>()
+        .AddScoped<INotaSalidaServicio, NotaSalidaLogica>();
 
 #endregion
 

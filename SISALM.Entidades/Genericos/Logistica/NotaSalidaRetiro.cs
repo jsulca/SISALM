@@ -2,7 +2,7 @@
 
 namespace SISALM.Entidades.Logistica
 {
-    public partial class NotaSalidaMaterial
+    public partial class NotaSalidaRetiro
     {
         public int Id { get; set; }
         public int NotaSalidaId { get; set; }
@@ -10,7 +10,8 @@ namespace SISALM.Entidades.Logistica
         public int MaterialId { get; set; }
 
         public decimal Cantidad { get; set; }
-        //public decimal Precio { get; set; }
+        public decimal Precio { get; set; }
+        public DateTime? Periodo { get; set; }
 
         public NotaSalida? NotaSalida { get; set; }
         public Material? Material { get; set; }

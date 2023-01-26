@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SISALM.Contextos;
@@ -11,9 +12,11 @@ using SISALM.Contextos;
 namespace SISALM.Contextos.Migrations
 {
     [DbContext(typeof(SISALMContexto))]
-    partial class SISALMContextoModelSnapshot : ModelSnapshot
+    [Migration("20230115212802_Modificar_NotaSalida")]
+    partial class ModificarNotaSalida
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -450,52 +453,6 @@ namespace SISALM.Contextos.Migrations
                     b.ToTable("NotaSalidaMaterial", (string)null);
                 });
 
-            modelBuilder.Entity("SISALM.Entidades.Logistica.NotaSalidaRetiro", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AlmacenId")
-                        .HasColumnType("integer")
-                        .HasColumnName("almacenid");
-
-                    b.Property<decimal>("Cantidad")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("cantidad");
-
-                    b.Property<int>("MaterialId")
-                        .HasColumnType("integer")
-                        .HasColumnName("materialid");
-
-                    b.Property<int>("NotaSalidaId")
-                        .HasColumnType("integer")
-                        .HasColumnName("notasalidaid");
-
-                    b.Property<DateTime?>("Periodo")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("periodo");
-
-                    b.Property<decimal>("Precio")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("precio");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AlmacenId");
-
-                    b.HasIndex("MaterialId");
-
-                    b.HasIndex("NotaSalidaId");
-
-                    b.ToTable("NotaSalidaRetiro", (string)null);
-                });
-
             modelBuilder.Entity("SISALM.Entidades.Logistica.AlmacenMaterial", b =>
                 {
                     b.HasOne("SISALM.Entidades.General.Almacen", "Almacen")
@@ -618,33 +575,6 @@ namespace SISALM.Contextos.Migrations
                     b.Navigation("NotaSalida");
                 });
 
-            modelBuilder.Entity("SISALM.Entidades.Logistica.NotaSalidaRetiro", b =>
-                {
-                    b.HasOne("SISALM.Entidades.General.Almacen", "Almacen")
-                        .WithMany("Retiros")
-                        .HasForeignKey("AlmacenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SISALM.Entidades.General.Material", "Material")
-                        .WithMany("Retiros")
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SISALM.Entidades.Logistica.NotaSalida", "NotaSalida")
-                        .WithMany("Retiros")
-                        .HasForeignKey("NotaSalidaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Almacen");
-
-                    b.Navigation("Material");
-
-                    b.Navigation("NotaSalida");
-                });
-
             modelBuilder.Entity("SISALM.Entidades.General.Almacen", b =>
                 {
                     b.Navigation("Materiales");
@@ -654,8 +584,6 @@ namespace SISALM.Contextos.Migrations
                     b.Navigation("NotasEntrada");
 
                     b.Navigation("NotasSalida");
-
-                    b.Navigation("Retiros");
                 });
 
             modelBuilder.Entity("SISALM.Entidades.General.Material", b =>
@@ -667,8 +595,6 @@ namespace SISALM.Contextos.Migrations
                     b.Navigation("NotasEntrada");
 
                     b.Navigation("NotasSalida");
-
-                    b.Navigation("Retiros");
                 });
 
             modelBuilder.Entity("SISALM.Entidades.Logistica.NotaEntrada", b =>
@@ -687,8 +613,6 @@ namespace SISALM.Contextos.Migrations
                     b.Navigation("Movimientos");
 
                     b.Navigation("NotasEntrada");
-
-                    b.Navigation("Retiros");
                 });
 #pragma warning restore 612, 618
         }

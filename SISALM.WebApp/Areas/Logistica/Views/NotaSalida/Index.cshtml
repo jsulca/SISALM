@@ -1,5 +1,150 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewBag.Title = "Lista de Notas de Salida";
+    
+    var selectTipo = Html.GetEnumSelectList<TipoNotaSalida>();
+    var selectEstado = Html.GetEnumSelectList<EstadoNotaSalida>();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">@ViewBag.Title</h5>
+                    <a role="button" class="btn btn-sm btn-primary" href="/Logistica/NotaSalida/Nuevo" title="Nuevo"><span class="fa fa-plus"></span></a>
+                </div>
+
+                <h6 class="card-subtitle mb-2 text-muted">Filtros</h6>
+                <div class="row g-2" id="Filtros">
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="CÓDIGO" id="FCodigo" />
+                    </div>
+                    <div class="col-sm">
+                        <input type="text" class="form-control form-control-sm" placeholder="DESCRIPCIÓN" id="FDescripcion" />
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select form-select-sm" asp-items="selectTipo" id="FTipo">
+                            <option value="">TODOS</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select form-select-sm" asp-items="selectEstado" id="FEstado">
+                            <option value="">TODOS</option>
+                        </select>
+                    </div>
+                    <div class="col-12" id="mensaje"></div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table id="tblIndex" class="table table-bordered table-sm table-hover text-no-wrap"
+                                   data-pagesize="15"
+                                   data-pageindex="0"
+                                   data-totalrows="0"
+                                   data-function="index.Listar"
+                                   data-paginator="#paginator">
+                                <thead>
+                                    <tr class="text-center text-uppercase table-warning">
+                                        <th scope="col" width="50"></th>
+                                        <th scope="col" width="50">#</th>
+                                        <th scope="col" width="100">CÓDIGO</th>
+                                        <th scope="col" width="100">TIPO</th>
+                                        <th scope="col">DESCRIPCIÓN</th>
+                                        <th scope="col" width="100">NOTA ENTRADA</th>
+                                        <th scope="col" width="100">NRO. COMPROB</th>
+                                        <th scope="col" width="100">ESTADO</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                        <div id="paginator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container"></div>
+</div>
+
+@section scripts {
+    <script>
+        var index = {
+            Listar: (page) => {
+                var table = $('#tblIndex')
+                var model = {
+                    'filtro.Codigo': $("#FCodigo").val(),
+                    'filtro.Descripcion': $("#FDescripcion").val(),
+                    'filtro.Tipo': $("#FTipo").val(),
+                    'filtro.Estado': $("#FEstado").val(),
+                    'pageIndex': page,
+                    'pageSize': table.data('pagesize')
+                }
+
+                $.ajax({
+                    url: "/Logistica/NotaSalida/Listar",
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        helper.wait.append('#mensaje')
+                    },
+                    complete: function () {
+                        helper.wait.remove('#mensaje')
+                    },
+                    success: function (data) {
+                        table.data('pageindex', page)
+                        table.data('totalrows', data.totalRows)
+                        index.GenerarTabla(table, data.lista)
+                        if (data.totalRows == 0) table.append('<tr><td colspan="17" class="text-center text-bold">NO EXISTEN REGISTROS</td></tr>')
+                    },
+                    error: function (data) {
+                        helper.error.show('#mensaje', data.responseText);
+                    }
+                });
+            },
+            GenerarTabla: (table, lista) => {
+                var tbody = table.children('tbody')
+                tbody.children('tr').remove()
+                var _rows = ''
+                var _nro = table.data('pagesize') * table.data('pageindex')
+
+                lista.forEach(({ id, codigo, descripcion, activo, tipo, estado, notaEntrada, nroComprobante }) => {
+                    _rows += `<tr>
+                                <td class="text-center"><a href="/Logistica/NotaSalida/Ver/${id}" class="text-info" title="Ver"><span class="fa fa-eye"></span></a></td>
+                                <td class="text-end">${++_nro}</td>
+                                <td class="text-center">${codigo || ''}</td>
+                                <td class="text-center">${TIPONOTASALIDA[tipo]}</td>
+                                <td>${descripcion}</td>
+                                        <td class="text-center">${notaEntrada.codigo || ''}</td>
+                                <td class="text-center">${nroComprobante || ''}</td>
+                                <td class="text-center">${ESTADONOTASALIDA[estado]}</td>
+                            </tr>`
+                })
+
+                helper.pagination.update(table)
+                tbody.append(_rows)
+            },
+        }
+
+        $(function () {
+            index.Listar(0)
+
+            $('#Filtros input[type="text"]').keypress(function (e) {
+                var keyCode = e.keyCode || event.keyCode
+                if (keyCode == 13) index.Listar(0)
+            })
+
+            $('#Filtros select').change(function (e) {
+                index.Listar(0)
+            })
+        })
+    </script>
 }

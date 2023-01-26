@@ -20,8 +20,11 @@ namespace SISALM.Contextos
 
         public DbSet<NotaEntrada> NotaEntrada { get; set; }
         public DbSet<NotaEntradaMaterial> NotaEntradaMaterial { get; set; }
+
         public DbSet<NotaSalida> NotaSalida { get; set; }
         public DbSet<NotaSalidaMaterial> NotaSalidaMaterial { get; set; }
+        public DbSet<NotaSalidaRetiro> NotaSalidaRetiro { get; set; }
+
         public DbSet<AlmacenMaterial> AlmacenMaterial { get; set; }
         public DbSet<Movimiento> Movimiento { get; set; }
 
@@ -46,8 +49,11 @@ namespace SISALM.Contextos
 
             NotaEntradaConfiguracion.Configure(modelBuilder.Entity<NotaEntrada>());
             NotaEntradaMaterialConfiguracion.Configure(modelBuilder.Entity<NotaEntradaMaterial>());
+            
             NotaSalidaConfiguracion.Configure(modelBuilder.Entity<NotaSalida>());
             NotaSalidaMaterialConfiguracion.Configure(modelBuilder.Entity<NotaSalidaMaterial>());
+            NotaSalidaRetiroConfiguracion.Configure(modelBuilder.Entity<NotaSalidaRetiro>());
+
             AlmacenMaterialConfiguracion.Configure(modelBuilder.Entity<AlmacenMaterial>());
             MovimientoConfiguracion.Configure(modelBuilder.Entity<Movimiento>());
 

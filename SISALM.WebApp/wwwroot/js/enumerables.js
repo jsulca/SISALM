@@ -26,3 +26,16 @@ const TIPONOTAENTRADA = {
     3: "TRASLADO",
     4: "COMPRA SIN OC",
 }
+
+const ESTADONOTASALIDA = {
+    0: "RESERVADO",
+    1: "FINALIZADO",
+    2: "ANULADO"
+}
+
+const TIPONOTASALIDA = {
+    0: "TRASLADO",
+    1: "AJUSTE DE INV.",
+    2: "ANULACION DE NE",
+    3: "SALIDA ALMACEN",
+}
